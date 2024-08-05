@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Target environment"
+        required: true
+        default: stg
+        type: choice
+        options:
+        - stg
+        - prd
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - id: setenv
+        env:
+          REF: ${{ github.ref }}
+        run: |-
+          if [[ "$REF" == 'refs/heads/staging' ]] || [[ "${{ github.event.inputs.env }}" == "stg" ]]; then
+            echo "ENV=stg" >> $GITHUB_OUTPUT
+          elif [[ "$REF" == 'refs/heads/main' ]] || [[ "${{ github.event.inputs.env }}" == "prd" ]]; then
+            echo "ENV=prd" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=null" >> $GITHUB_OUTPUT
+          fi
+      - name: echo test
+        run: |
+          echo ${{ steps.setenv.outputs.ENV }}
+          echo ${{ github.ref }}
