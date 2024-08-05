@@ -30,9 +30,9 @@ jobs:
         env:
           REF: ${{ github.ref }}
         run: |-
-          if [[ "$REF" == 'refs/heads/staging' ]] || [[ "${{ github.event.inputs.env }}" == "stg" ]]; then
+          if [[ "${{ github.event.inputs.env }}" == "stg" ]]; then
             echo "ENV=stg" >> $GITHUB_OUTPUT
-          elif [[ "$REF" == 'refs/heads/main' ]] || [[ "${{ github.event.inputs.env }}" == "prd" ]]; then
+          elif[[ "${{ github.event.inputs.env }}" == "prd" ]]; then
             echo "ENV=prd" >> $GITHUB_OUTPUT
           else
             echo "ENV=null" >> $GITHUB_OUTPUT
